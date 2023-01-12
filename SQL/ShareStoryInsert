@@ -1,0 +1,90 @@
+USE [Immersed]
+GO
+/****** Object:  StoredProcedure [dbo].[ShareStory_Insert]    Script Date: 1/12/2023 11:42:19 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<James Grant>
+-- Create date: <20221116>
+-- Description:	<Inserts Record into Table dbo.ShareStory>
+-- Code Reviewer:
+
+
+-- MODIFIED BY: author
+-- MODIFIED DATE:12/1/2020
+-- Code Reviewer: 
+-- Note: 
+-- =============================================
+
+
+		ALTER PROC [dbo].[ShareStory_Insert]
+			 @Title nvarchar(50)
+			,@Email nvarchar(50)
+			,@Story nvarchar(3000)
+			,@CreatedBy int
+			,@IsApproved bit
+			,@ApprovedBy int
+			,@batchStories dbo.ShareStoryFileIds READONLY
+			,@Id int output
+
+		AS
+
+			/*
+
+			Declare
+
+			 @Name nvarchar(50) = 'Test User'
+			,@Email nvarchar(50) = 'Test@Email.com'
+			,@Story nvarchar(3000) = 'Great Test Story'
+			,@CreatedBy int = 1
+			,@IsApproved bit = 0
+			,@ApprovedBy int = 2
+			,@Id int 
+			
+			Execute dbo.ShareStory_Insert
+
+			 @Name 
+			,@Email 
+			,@Story 
+			,@CreatedBy 
+			,@IsApproved 
+			,@ApprovedBy 
+			,@Id  
+			
+			Declare
+			@Id int = 1
+			Execute dbo.ShareStory_SelectById
+			@Id
+
+			Select * 
+			From dbo.ShareStory
+
+			
+			*/
+
+		BEGIN
+		INSERT INTO dbo.ShareStory
+		(
+			 Title
+			,Email
+			,Story
+			,CreatedBy
+			,IsApproved
+			,ApprovedBy
+		)
+		VALUES
+		(
+			 @Title
+			,@Email
+			,@Story
+			,@CreatedBy
+			,@IsApproved
+			,@ApprovedBy
+		)
+		SET @Id = SCOPE_IDENTITY()
+
+		EXECUTE  [dbo].[ShareStoryFile_Insert]  @Id ,@batchStories
+		
+		END

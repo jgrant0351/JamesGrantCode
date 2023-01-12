@@ -1,0 +1,119 @@
+import axios from "axios";
+import { API_HOST_PREFIX, onGlobalSuccess, onGlobalError} from "./serviceHelpers"
+
+
+
+const endpoint = `/api/sharestories`;
+
+      
+const getAllStories = (pageIndex,pageSize) => {
+    _logger("Select All Stories")
+      const config = {
+        method: "GET",
+        url:`${endpoint}/paginate?pageIndex=${pageIndex}&pageSize=${pageSize}&IsApproved=true`,
+        crossdomain: true,
+        headers: { "Content-Type": "application/json" },
+    };
+        
+    return axios(config).then(onGlobalSuccess).catch(onGlobalError)
+        };     
+
+        const getUnapprovedStories = (pageIndex,pageSize) => {
+          _logger("Select All Stories")
+            const config = {
+              method: "GET",
+              url:`${endpoint}/paginate?pageIndex=${pageIndex}&pageSize=${pageSize}&IsApproved=false`,
+              crossdomain: true,
+              headers: { "Content-Type": "application/json" },
+          };
+              
+          return axios(config).then(onGlobalSuccess).catch(onGlobalError)
+              }; 
+
+const getStoryById = (StoryId) => {
+   
+        const config = {
+        method: "GET",
+        url: `${endpoint}/${StoryId}`,
+
+        crossdomain: true,
+        headers: { "Content-Type": "application/json" },
+        };
+          return axios(config).then(onGlobalSuccess).catch(onGlobalError);
+                  ;
+    };      
+const getStoryBySearch = (pageIndex,pageSize,values) => {
+       const config = {
+        method: "GET",
+        url: `${API_HOST_PREFIX}/api/sharestories/search?pageIndex=${pageIndex}&pageSize=${pageSize}&Query=${values}`,
+
+        crossdomain: true,
+        headers: { "Content-Type": "application/json" },
+        };
+          return axios(config).then(onGlobalSuccess).catch(onGlobalError);
+                  ;
+    };      
+
+const storyUpdate = (id, StoryUpdateRequest) => {
+   
+      const config = {
+        method: "PUT",
+        url: `${endpoint}/${id}`,
+        data: StoryUpdateRequest,
+        crossdomain: true,
+        headers: { "Content-Type": "application/json" },
+      };
+     return axios(config).then(onGlobalSuccess).catch(onGlobalError)
+                
+    };   
+    const storyApproval = (id, StoryUpdateRequest) => {
+   
+      const config = {
+        method: "PUT",
+        url: `${endpoint}/approval/${id}`,
+        data: StoryUpdateRequest,
+        crossdomain: true,
+        headers: { "Content-Type": "application/json" },
+      };
+     return axios(config).then(onGlobalSuccess).catch(onGlobalError)
+                
+    };     
+const storyAdd = (StoryAddRequest) => {
+   
+        const config = {
+          method: "POST",
+          url: `${endpoint}`,
+          data: StoryAddRequest,
+          crossdomain: true,
+          headers: { "Content-Type": "application/json" },
+          };
+  
+         
+          return axios(config).then(onGlobalSuccess).catch(onGlobalError);
+        };                          
+const storyDeleteById = (id) => {
+  
+           const config = {
+              method: "GET",
+              url: `${endpoint}/${id}`,
+              crossdomain: true,
+              headers: { "Content-Type": "application/json" },
+            };
+          
+                 
+            return axios(config).then(onGlobalSuccess).catch(onGlobalError);
+          };                          
+
+const StoryService = 
+{ 
+  getAllStories,
+  getUnapprovedStories, 
+  getStoryById,
+  getStoryBySearch,  
+  storyUpdate,
+  storyAdd,
+  storyDeleteById,
+  storyApproval
+};
+
+export default StoryService;   

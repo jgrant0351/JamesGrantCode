@@ -1,0 +1,83 @@
+USE [Immersed]
+GO
+/****** Object:  StoredProcedure [dbo].[ShareStory_Update]    Script Date: 1/12/2023 11:39:44 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<James Grant>
+-- Create date: <20221116>
+-- Description:	<Updates The current record by Id in dbo.ShareStory>
+-- Code Reviewer:
+
+
+-- MODIFIED BY: author
+-- MODIFIED DATE:12/1/2020
+-- Code Reviewer: 
+-- Note: 
+-- =============================================
+
+
+		ALTER PROC [dbo].[ShareStory_Update]
+
+			 @Title nvarchar(50)
+			,@Email nvarchar(50)
+			,@Story nvarchar(3000)
+			,@CreatedBy int
+			,@IsApproved bit
+			,@ApprovedBy int
+			,@batchStories dbo.ShareStoryFileIds READONLY
+			,@Id int 
+
+		AS
+
+			/*
+
+			Declare
+				 @Name nvarchar(50)
+				,@Email nvarchar(50)
+				,@Story nvarchar(3000)
+				,@CreatedBy int
+				 @IsApproved bit = 0
+				,@ApprovedBy int = 2
+				,@Id int 
+			
+			Execute dbo.ShareStory_Update
+				 @Name 
+				,@Email 
+				,@Story
+				,@CreatedBy 
+				,@IsApproved 
+				,@ApprovedBy 
+				,@Id  
+
+			Select * 
+			From dbo.ShareStory
+
+			
+			*/
+
+	BEGIN
+		UPDATE dbo.ShareStory
+		SET 
+			[Title] = @Title
+			,Email = @Email
+			,Story = @Story
+			,CreatedBy = @CreatedBy
+			,IsApproved = @IsApproved
+			,ApprovedBy = @ApprovedBy
+			,DateModified = GETUTCDATE()
+		WHERE Id = @Id
+		IF @IsApproved = 0
+		EXECUTE  [dbo].[ShareStoryFile_Update]  
+			@Id 
+			,@batchStories
+			
+		ELSE
+
+		Select *
+		FROM  error_cannot_update_if_approved;
+	
+		
+	END

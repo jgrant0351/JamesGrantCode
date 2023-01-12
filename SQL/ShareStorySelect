@@ -1,0 +1,93 @@
+USE [Immersed]
+GO
+/****** Object:  StoredProcedure [dbo].[ShareStory_SelectAll]    Script Date: 1/12/2023 11:43:36 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<James Grant>
+-- Create date: <20221116>
+-- Description:	<Returns Paginated Results from dbo.ShareStory>
+-- Code Reviewer:
+
+
+-- MODIFIED BY: author
+-- MODIFIED DATE:12/1/2020
+-- Code Reviewer: 
+-- Note: 
+-- =============================================
+
+		ALTER PROC [dbo].[ShareStory_SelectAll]
+			 @PageIndex int
+			,@PageSize int
+			,@IsApproved bit
+
+		AS
+
+			/*
+
+			Declare
+
+			 @PageIndex int = 0
+			,@PageSize int = 20
+			,@IsApproved bit = 0
+			
+			Execute dbo.ShareStory_SelectAll
+
+			 @PageIndex
+			,@PageSize
+			,@IsApproved
+
+			select * 
+			From dbo.ShareStoryFile
+
+			select * 
+			From dbo.ShareStory
+
+			*/
+
+		BEGIN
+		DECLARE @offset int = @PageIndex * @PageSize
+
+		SELECT
+			Story.Id
+			,Story.Title
+			,Story.Email
+			,Story
+			,U.FirstName
+			,U.LastName
+			,IsApproved
+			,ApprovedBy
+			 ,Files =(
+			
+			Select F.Url,F.FileTypeId as FileType
+			
+
+			From dbo.ShareStoryFile as ssf inner join dbo.Files as F
+			on ssf.FileId = F.Id
+
+			
+
+			WHERE ssf.StoryId = Story.Id
+			for JSON AUTO
+			
+			)
+			,Story.DateCreated
+			,Story.DateModified
+			,TotalCount = Count(1) OVER()
+
+		FROM dbo.ShareStory as Story
+		inner join dbo.Users as U
+		on Story.CreatedBy = U.Id
+		
+	
+		WHERE IsApproved = @IsApproved
+		ORDER BY Story.DateModified DESC
+			
+			OFFSET @offSet Rows
+		FETCH NEXT @PageSize Rows ONLY
+
+		
+
+		END
